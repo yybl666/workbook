@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>单词收藏本</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+        }
+        input, button {
+            padding: 8px;
+            margin: 5px;
+        }
+        table {
+            width: 50%;
+            border-collapse: collapse;
+            margin: 20px auto;
+            background-color: #fff;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #eee;
+        }
+    </style>
+</head>
+<body>
+<h1>单词收藏本</h1>
+
+<div style="text-align: center;">
+    <input type="text" id="wordInput" placeholder="单词">
+    <input type="text" id="meaningInput" placeholder="意思">
+    <button onclick="addWord()">添加单词</button>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>单词</th>
+        <th>意思</th>
+    </tr>
+    </thead>
+    <tbody id="wordTableBody">
+    <!-- 数据行由 JS 动态生成 -->
+    </tbody>
+</table>
+
+<script>
+    const API_URL = "/words";
+
+    // 加载所有单词
+    async function loadWords() {
+        const response = await fetch(API_URL);
+        const words = await response.json();
+        const tbody = document.getElementById("wordTableBody");
+        tbody.innerHTML = "";
+        words.forEach(w => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td>${w.id}</td><td>${w.word}</td><td>${w.meaning}</td>`;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // 添加新单词
+    async function addWord() {
+        const word = document.getElementById("wordInput").value.trim();
+        const meaning = document.getElementById("meaningInput").value.trim();
+        if (!word || !meaning) {
+            alert("单词和意思都不能为空！");
+            return;
+        }
+
+        await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ word, meaning })
+        });
+
+        document.getElementById("wordInput").value = "";
+        document.getElementById("meaningInput").value = "";
+        loadWords();
+    }
+
+    // 页面加载时自动加载单词
+    loadWords();
+</script>
+</body>
+</html>
