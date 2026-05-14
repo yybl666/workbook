@@ -22,4 +22,9 @@ public class WordController {
     public Word save(@RequestBody Word word) {
         return wordRepository.save(word);
     }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        wordRepository.deleteById(id);
+    }
 }

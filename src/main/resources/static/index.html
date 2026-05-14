@@ -48,6 +48,7 @@
         <th>ID</th>
         <th>单词</th>
         <th>意思</th>
+        <th>操作</th>
     </tr>
     </thead>
     <tbody id="wordTableBody">
@@ -66,7 +67,8 @@
         tbody.innerHTML = "";
         words.forEach(w => {
             const tr = document.createElement("tr");
-            tr.innerHTML = `<td>${w.id}</td><td>${w.word}</td><td>${w.meaning}</td>`;
+            tr.innerHTML = `<td>${w.id}</td><td>${w.word}</td><td>${w.meaning}</td>
+                            <td><button onclick="deleteWord(${w.id})">删除</button></td>`;
             tbody.appendChild(tr);
         });
     }
@@ -91,6 +93,21 @@
         loadWords();
     }
 
+    //删除单词
+    async function deleteWord(id) {
+        const confirmed = confirm("确定要删除这个单词吗？")
+
+        if(!confirmed){
+            return;
+        }
+
+        await fetch(`${API_URL}/${id}`,
+            {
+                method:"DELETE"
+            })
+
+        loadWords();
+    }
     // 页面加载时自动加载单词
     loadWords();
 </script>
