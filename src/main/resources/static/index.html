@@ -68,7 +68,10 @@
         words.forEach(w => {
             const tr = document.createElement("tr");
             tr.innerHTML = `<td>${w.id}</td><td>${w.word}</td><td>${w.meaning}</td>
-                            <td><button onclick="deleteWord(${w.id})">删除</button></td>`;
+                            <td>
+                            <button onclick="editWord(${w.id},'${w.word}','${w.meaning}')">编辑</button>
+                            <button onclick="deleteWord(${w.id})">删除</button>
+                            </td>`;
             tbody.appendChild(tr);
         });
     }
@@ -104,6 +107,41 @@
         await fetch(`${API_URL}/${id}`,
             {
                 method:"DELETE"
+            })
+
+        loadWords();
+    }
+
+    //编辑单词
+    async function editWord(id,oldWord,oldMeaning) {
+        console.log(id)
+        console.log(oldWord)
+        console.log(oldMeaning)
+
+        const newWord = prompt("请输入新的单词",oldWord)
+
+        if(newWord == null){
+            return;
+        }
+
+        const newMeaning = prompt("请输入新的意思",oldMeaning)
+
+        if(newMeaning == null){
+            return;
+        }
+
+        await fetch(`${API_URL}/${id}`,
+            {
+                method:"PUT",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    word:newWord,
+                    meaning:newMeaning
+                })
             })
 
         loadWords();
