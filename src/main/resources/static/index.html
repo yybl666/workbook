@@ -40,6 +40,15 @@
     <input type="text" id="wordInput" placeholder="单词">
     <input type="text" id="meaningInput" placeholder="意思">
     <button onclick="addWord()">添加单词</button>
+    <input type="text" id="searchInput" placeholder="搜索单词">
+
+    <button onclick="searchWords()">
+        搜索
+    </button>
+
+    <button onclick="loadWords()">
+        显示全部
+    </button>
 </div>
 
 <table>
@@ -59,19 +68,41 @@
 <script>
     const API_URL = "/words";
 
-    // 加载所有单词
+    // 这里原先是有获取所有单词+渲染出来，但是因为要面对不同的数据来源，所以决定进行分离。
     async function loadWords() {
         const response = await fetch(API_URL);
         const words = await response.json();
-        const tbody = document.getElementById("wordTableBody");
+
+        renderWords(words);
+    }
+
+    //加载所有传入words渲染出来。
+    function renderWords(words){
+
+        const tbody =
+            document.getElementById("wordTableBody");
+
         tbody.innerHTML = "";
+
         words.forEach(w => {
+
             const tr = document.createElement("tr");
-            tr.innerHTML = `<td>${w.id}</td><td>${w.word}</td><td>${w.meaning}</td>
-                            <td>
-                            <button onclick="editWord(${w.id},'${w.word}','${w.meaning}')">编辑</button>
-                            <button onclick="deleteWord(${w.id})">删除</button>
-                            </td>`;
+
+            tr.innerHTML = `
+            <td>${w.id}</td>
+            <td>${w.word}</td>
+            <td>${w.meaning}</td>
+            <td>
+                <button onclick="editWord(${w.id}, '${w.word}', '${w.meaning}')">
+                    编辑
+                </button>
+
+                <button onclick="deleteWord(${w.id})">
+                    删除
+                </button>
+            </td>
+        `;
+
             tbody.appendChild(tr);
         });
     }
@@ -145,6 +176,22 @@
             })
 
         loadWords();
+    }
+
+    //搜索单词
+    async function searchWords() {
+        const keyword =
+            document.getElementById("searchInput").value.trim()
+
+        if(!keyword){
+            loadWords()
+            return
+        }
+        const response =
+            await fetch(`${API_URL}/search?keyword=${keyword}`)
+
+        const words = await response.json()
+        renderWords(words)
     }
     // 页面加载时自动加载单词
     loadWords();

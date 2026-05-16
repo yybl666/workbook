@@ -49,4 +49,9 @@ public class WordController {
 
         return wordRepository.save(word);
     }
+
+    @GetMapping("/search")
+    public List<Word> search(@RequestParam String keyword) {
+        return wordRepository.findByWordContaining(keyword);
+    }
 }
