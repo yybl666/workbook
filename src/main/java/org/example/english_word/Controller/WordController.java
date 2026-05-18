@@ -1,14 +1,18 @@
 package org.example.english_word.Controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import org.example.english_word.entity.Word;
 import org.example.english_word.repository.WordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/words")
+@Validated
 public class WordController {
     @Autowired
     private WordRepository wordRepository;
@@ -19,17 +23,17 @@ public class WordController {
     }
 
     @PostMapping
-    public Word save(@RequestBody Word word) {
+    public Word save(@Valid @RequestBody Word word) {
         return wordRepository.save(word);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable @Min(1) Long id) {
         wordRepository.deleteById(id);
     }
 
     @PutMapping("/{id}")
-    public Word update(@PathVariable Long id, @RequestBody Word newWord) {
+    public Word update(@PathVariable @Min(1) Long id, @RequestBody Word newWord) {
         /*你传了id就是要根据id进行一个判断，就是这个对象存不存在。
         * 除此之外，也是需要根据id得到指定对象，这个对象里有全面数据，这里参数newWord不一定
         * 所有的成员变量都有更改数据，到时候是以null被处理了。*/
